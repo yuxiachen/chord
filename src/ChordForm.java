@@ -10,6 +10,7 @@
  */
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.net.InetSocketAddress;
 import java.net.InetAddress;
 
@@ -337,6 +338,37 @@ public class ChordForm extends javax.swing.JFrame {
         });
     }
 
+    public void update() {
+        Thread thread = new Thread(){
+            public void run(){
+                while(m_node != null){
+                    m_node.printDataStructure();
+                    int[] ithStarts = m_node.getIthStarts();
+                    InetSocketAddress[] fingers = m_node.getFingers();
+                    String[] IDs = m_node.getIDs();
+                    Object[][] fingerTable = new String[6][3];
+                    for (int i = 0; i < 6; i++) {
+                        fingerTable[i][0] = String.valueOf(ithStarts[i]);
+                        fingerTable[i][1] = (fingers[i] == null)? "Null" : fingers[i].toString();
+                        fingerTable[i][2] = IDs[i];
+                    }
+                    String[] columnNames = {"Start", "IP : Port", "ID & Position"};
+                    DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
+                    tFinger.setModel(model);
+                    m_node.printNeighbors();
+                    String pred = m_node.getPredecessorText();
+                    t_predecessor.setText(pred);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bCreate;
     private javax.swing.JButton bExit;
@@ -357,4 +389,5 @@ public class ChordForm extends javax.swing.JFrame {
     private static Node m_node;
     private static InetSocketAddress m_contact;
     private static Helper m_helper;
+
 }
