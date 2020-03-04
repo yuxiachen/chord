@@ -5,6 +5,7 @@
  */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.net.InetSocketAddress;
 import java.net.InetAddress;
 
@@ -41,13 +42,15 @@ public class ChordForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         bQuery = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tPrint = new javax.swing.JTextArea();
+        tPrint = new javax.swing.JTextArea("Query Result: ");
         t_predecessor = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tFinger = new javax.swing.JTable();
         bExit = new javax.swing.JButton();
         bCreate = new javax.swing.JButton();
+
+        result_queryOne = "";
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,6 +106,7 @@ public class ChordForm extends javax.swing.JFrame {
 
         tPrint.setColumns(20);
         tPrint.setRows(5);
+        tPrint.setFont(new Font("Serif",Font.PLAIN,20));
         jScrollPane1.setViewportView(tPrint);
 
         jLabel4.setFont(new java.awt.Font("Waree", 0, 15)); // NOI18N
@@ -248,6 +252,8 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bQueryActionPerformed
         // TODO add your handling code here:
+        Query();
+        tPrint.append(result_queryOne);
     }//GEN-LAST:event_bQueryActionPerformed
 
     private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
@@ -360,6 +366,73 @@ public class ChordForm extends javax.swing.JFrame {
     thread.start();
 }
 
+    private void Query() {
+        InetSocketAddress localAddress = m_node.getAddress();
+        if (localAddress == null) {
+            System.out.println("Cannot find address you are trying to contact. Now exit.");
+            System.exit(0);;
+        }
+        // successfully constructed socket address of the node we are
+        // trying to contact, check if it's alive
+        String response = Helper.sendRequest(localAddress, "KEEP");
+        if (response == null || !response.equals("ALIVE"))  {
+            System.out.println("\nCannot find node you are trying to contact. Now exit.\n");
+            System.exit(0);
+        }
+        // it's alive, print connection info
+        System.out.println("Connection to node "+localAddress.getAddress().toString()+", port " +
+                localAddress.getPort()+", position "+Helper.hexIdAndPosition(localAddress)+".");
+        // check if system is stable
+        boolean pred = false;
+        boolean succ = false;
+        InetSocketAddress pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
+        InetSocketAddress succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
+        if (pred_addr == null || succ_addr == null) {
+            System.out.println("The node your are contacting is disconnected. Now exit.");
+            System.exit(0);
+        }
+        if (pred_addr.equals(localAddress))
+            pred = true;
+        if (succ_addr.equals(localAddress))
+            succ = true;
+
+        // we suppose the system is stable if (1) this node has both valid
+        // predecessor and successor or (2) none of them
+        while (pred^succ) {
+            System.out.println("Waiting for the system to be stable...");
+            pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
+            succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
+            if (pred_addr == null || succ_addr == null) {
+                System.out.println("The node your are contacting is disconnected. Now exit.");
+                System.exit(0);
+            }
+            if (pred_addr.equals(localAddress))
+                pred = true;
+            else
+                pred = false;
+            if (succ_addr.equals(localAddress))
+                succ = true;
+            else
+                succ = false;
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+            }
+        }
+        String command = textKey.getText();
+        long hash = Helper.hashString(command);
+        System.out.println("\nHash value is "+Long.toHexString(hash));
+        InetSocketAddress result = Helper.requestAddress(localAddress, "FINDSUCC_"+hash);
+
+        // if fail to send request, local node is disconnected, exit
+        if (result == null) {
+            System.out.println("The node your are contacting is disconnected. Now exit.");
+            System.exit(0);
+        }
+        // print out response
+        result_queryOne = "\nNode "+result.getAddress().toString()+"\nPort: " +
+                result.getPort()+"\nPosition: " + Helper.hexIdAndPosition(result );
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bCreate;
@@ -383,5 +456,6 @@ public class ChordForm extends javax.swing.JFrame {
     private static Helper m_helper = new Helper();
     private static Node m_node = new Node (Helper.createSocketAddress("192.168.1.31"+":"+"8000"));;
     private static InetSocketAddress m_contact;
+    private static String result_queryOne;
     private String alertMessage =  "";
 }
