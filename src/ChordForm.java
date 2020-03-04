@@ -4,21 +4,27 @@
  * and open the template in the editor.
  */
 
-import javax.swing.*;
-import java.net.InetSocketAddress;
-
 /**
  *
  * @author mengdi
  */
+
+import javax.swing.*;
+import java.net.InetSocketAddress;
+import java.net.InetAddress;
+
+import java.net.UnknownHostException;
+
 public class ChordForm extends javax.swing.JFrame {
 
     /**
      * Creates new form ChordForm
      */
+
     public ChordForm() {
         initComponents();
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -56,6 +62,11 @@ public class ChordForm extends javax.swing.JFrame {
 
         bJoin.setFont(new java.awt.Font("Waree", 0, 18)); // NOI18N
         bJoin.setText("Join");
+        bJoin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bJoinMouseClicked(evt);
+            }
+        });
         bJoin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bJoinActionPerformed(evt);
@@ -256,6 +267,41 @@ public class ChordForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_textPortActionPerformed
 
+    private void bJoinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bJoinMouseClicked
+        // TODO add your handling code here:
+
+        // get local machine's ip
+        String local_ip = null;
+        try {
+            local_ip = InetAddress.getLocalHost().getHostAddress();
+
+        } catch (UnknownHostException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        m_node = new Node (Helper.createSocketAddress(local_ip+":"+"8000"));
+
+        //get the contact address
+        String ip = textIp.getText();
+        String port = textPort.getText();
+        String addr = ip + ":" + port;
+        System.out.println(addr);
+
+        // try to join ring from contact node
+        boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
+
+        if (!successful_join) {
+            System.out.println("Cannot connect with node you are trying to contact. Now exit.");
+            System.exit(0);
+        }
+
+        // print join info
+        else{
+            System.out.println("Joining the Chord ring.");
+            System.out.println("Local IP: "+local_ip);
+            m_node.printNeighbors();
+        }
+    }//GEN-LAST:event_bJoinMouseClicked
 
     /**
      * @param args the command line arguments
@@ -264,7 +310,7 @@ public class ChordForm extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -283,7 +329,6 @@ public class ChordForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ChordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -302,10 +347,10 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTable tFinger;
     private javax.swing.JTextField tPrint;
     private javax.swing.JTextField textIp;
+    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
 
