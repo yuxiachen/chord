@@ -449,8 +449,7 @@ public class Node {
         // else, it can find either predecessor or successor
         else {
             if (predecessor != null) {
-                predecessorText = predecessor.getAddress().toString()+", "
-                        + "port "+predecessor.getPort()+ ", position "+Helper.hexIdAndPosition(predecessor);
+                predecessorText = predecessor.getAddress().toString().substring(1);
             }
             else {
                 predecessorText = "updating...";

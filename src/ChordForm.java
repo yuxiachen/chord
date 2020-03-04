@@ -233,9 +233,10 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         m_node.stopAllThreads();
-        m_node = null;
+        node_alive = false;
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
+        System.exit(0);
     }//GEN-LAST:event_bLeaveActionPerformed
 
     private void bJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJoinActionPerformed
@@ -455,7 +456,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
     private static Helper m_helper = new Helper();
-    private static Node m_node = new Node (Helper.createSocketAddress("172.26.24.225"+":"+"5000"));;
+    private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));
     private static InetSocketAddress m_contact;
     private static String result_queryOne;
     private String alertMessage =  "";
