@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.server.ExportException;
 
 /**
  * Listener thread that keeps listening to a port and asks talker thread to process
@@ -30,8 +31,8 @@ public class Listener extends Thread {
 
     @Override
     public void run() {
+        Socket talkSocket = null;
         while (alive) {
-            Socket talkSocket = null;
             try {
                 talkSocket = serverSocket.accept();
             } catch (IOException e) {
@@ -42,9 +43,15 @@ public class Listener extends Thread {
             //new talker
             new Thread(new Talker(talkSocket, local)).start();
         }
+
     }
 
     public void toDie() {
         alive = false;
+        try{
+            serverSocket.close();
+        } catch (Exception e) {
+            System.err.println("Error closing stream : " + e.getMessage());
+        }
     }
 }

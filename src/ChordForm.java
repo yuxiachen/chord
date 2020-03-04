@@ -122,6 +122,7 @@ public class ChordForm extends javax.swing.JFrame {
             }
         ));
         tFinger.setRowHeight(40);
+        tFinger.getColumnModel().getColumn(1).setWidth(200);
         jScrollPane2.setViewportView(tFinger);
 
         bExit.setFont(new java.awt.Font("Waree", 0, 18)); // NOI18N
@@ -227,12 +228,10 @@ public class ChordForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
-        // TODO add your handling code here:
         m_node.stopAllThreads();
         m_node = null;
-        System.out.println("Leaving the ring...");
+        alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
-    
     }//GEN-LAST:event_bLeaveActionPerformed
 
     private void bJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJoinActionPerformed
@@ -256,11 +255,8 @@ public class ChordForm extends javax.swing.JFrame {
     }//GEN-LAST:event_bExitActionPerformed
 
     private void bCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCreateActionPerformed
-        // TODO add your handling code here:
-        m_helper = new Helper();
-
         // get local machine's ip
-        String local_ip = "192.168.1.31";
+        String local_ip = "172.31.226.155";
         String port = "8888";
 
         // create node
@@ -268,51 +264,38 @@ public class ChordForm extends javax.swing.JFrame {
         m_contact = m_node.getAddress();
         // try to join ring from contact node
         boolean successful_join = m_node.join(m_contact);
-        String alterMessage = "";
         // fail to join contact node
         if (!successful_join) {
-            alterMessage = "Cannot Create the ring. Now exit.";
+            alertMessage = "Cannot Create the ring. Now exit.";
         } else {
-            alterMessage = "Ring created successfully!";
+            alertMessage = "Ring created successfully!";
             updateFingerTable();
         }
-        JOptionPane.showMessageDialog(null, alterMessage);
+        JOptionPane.showMessageDialog(null, alertMessage);
 
     }//GEN-LAST:event_bCreateActionPerformed
 
     private void bJoinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bJoinMouseClicked
         // TODO add your handling code here:
-        // get local machine's ip
-        String local_ip = null;
-        try {
-            local_ip = InetAddress.getLocalHost().getHostAddress();
-
-        } catch (UnknownHostException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        m_node = new Node (Helper.createSocketAddress(local_ip+":"+"8000"));
-
         //get the contact address
         String ip = textIp.getText();
         String port = textPort.getText();
         String addr = ip + ":" + port;
-        System.out.println(addr);
 
         // try to join ring from contact node
         boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
 
         if (!successful_join) {
-            System.out.println("Cannot connect with node you are trying to contact. Now exit.");
-            System.exit(0);
+            alertMessage = "Cannot connect with node you are trying to contact. Now exit.";
         }
 
         // print join info
         else{
-            System.out.println("Joining the Chord ring.");
-            System.out.println("Local IP: "+local_ip);
-            m_node.printNeighbors();
+            alertMessage = "Joining the Chord ring successfully!";
+            updateFingerTable();
         }
+        JOptionPane.showMessageDialog(null, alertMessage);
+
     }//GEN-LAST:event_bJoinMouseClicked
 
     /**
@@ -361,7 +344,8 @@ public class ChordForm extends javax.swing.JFrame {
                 Object[][] fingerTable = new String[6][3];
                 for (int i = 0; i < 6; i++) {
                     fingerTable[i][0] = String.valueOf(ithStarts[i]);
-                    fingerTable[i][1] = (fingers[i] == null)? "Null" : fingers[i].toString();
+                    fingerTable[i][1] = (fingers[i] == null)? "Null" : fingers[i].getAddress().toString().substring(1)
+                            + ":" + fingers[i].getPort();
                     fingerTable[i][2] = IDs[i];
                 }
                 String[] columnNames = {"Start", "IP : Port", "ID & Position"};
@@ -401,8 +385,8 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textKey;
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
-
-    private static Node m_node;
+    private static Helper m_helper = new Helper();
+    private static Node m_node = new Node (Helper.createSocketAddress("192.168.1.31"+":"+"8000"));;
     private static InetSocketAddress m_contact;
-    private static Helper m_helper;
+    private String alertMessage =  "";
 }
