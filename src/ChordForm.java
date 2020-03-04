@@ -259,6 +259,7 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_bExitActionPerformed
 
     private void bCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCreateActionPerformed
@@ -270,7 +271,6 @@ public class ChordForm extends javax.swing.JFrame {
         if (!successful_join) {
             alertMessage = "Cannot Create the ring. Now exit.";
         } else {
-            node_alive = true;
             alertMessage = "Ring created successfully!";
             updateFingerTable();
         }
@@ -295,7 +295,6 @@ public class ChordForm extends javax.swing.JFrame {
 
         // print join info
         else{
-            node_alive = true;
             alertMessage = "Joining the Chord ring successfully!";
             updateFingerTable();
         }
@@ -340,7 +339,7 @@ public class ChordForm extends javax.swing.JFrame {
     public void updateFingerTable() {
     Thread thread = new Thread(){
         public void run(){
-            while(node_alive){
+            while(m_node != null){
                 m_node.printDataStructure();
                 int[] ithStarts = m_node.getIthStarts();
                 InetSocketAddress[] fingers = m_node.getFingers();
@@ -457,8 +456,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
     private static Helper m_helper = new Helper();
-    private static boolean node_alive = false;
-    private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));;
+    private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));
     private static InetSocketAddress m_contact;
     private static String result_queryOne;
     private String alertMessage =  "";
