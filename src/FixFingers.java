@@ -21,7 +21,7 @@ public class FixFingers extends Thread{
     @Override
     public void run() {
         while (alive) {
-            int i = random.nextInt(5) + 2;
+            int i = random.nextInt(6);
             InetSocketAddress ithfinger = local.find_successor(Helper.ithStart(local.getId(), i));
             local.updateFingers(i, ithfinger);
             try {

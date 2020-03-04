@@ -36,7 +36,7 @@ public class Node {
 
         // initialize an empty finge table
         finger = new HashMap<Integer, InetSocketAddress>();
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 0; i < 6; i++) {
             updateIthFinger (i, null);
         }
 
@@ -225,7 +225,7 @@ public class Node {
         long findid_relative = Helper.computeRelativeId(findid, localId);
 
         // check from last item in finger table
-        for (int i = 6; i > 0; i--) {
+        for (int i = 5; i >= 0; i--) {
             InetSocketAddress ith_finger = finger.get(i);
             if (ith_finger == null) {
                 continue;
@@ -260,8 +260,8 @@ public class Node {
      */
     public synchronized void updateFingers(int i, InetSocketAddress value) {
 
-        // valid index in [1, 6], just update the ith finger
-        if (i > 0 && i <= 6) {
+        // valid index in [0, 5], just update the ith finger
+        if (i >= 0 && i < 6) {
             updateIthFinger(i, value);
         }
 
@@ -292,7 +292,7 @@ public class Node {
         finger.put(i, value);
 
         // if the updated one is successor, notify the new successor
-        if (i == 1 && value != null && !value.equals(localAddress)) {
+        if (i == 0 && value != null && !value.equals(localAddress)) {
             notify(value);
         }
     }
@@ -460,7 +460,7 @@ public class Node {
 
     public void printDataStructure () {
         for (int i = 0; i < 6; i++) {
-            ithStarts[i] = Helper.ithStart(Helper.hashSocketAddress(localAddress), i + 1);
+            ithStarts[i] = Helper.ithStart(Helper.hashSocketAddress(localAddress), i);
             if (finger.get(i) != null) {
                 fingers[i] = finger.get(i);
                 IDs[i] = Helper.hexIdAndPosition(fingers[i]);
