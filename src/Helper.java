@@ -156,7 +156,7 @@ public class Helper {
      */
     public static String hexIdAndPosition (InetSocketAddress addr) {
         long hash = hashSocketAddress(addr);
-        return (longTo8DigitHex(hash)+" ("+hash*100/Helper.getPowerOfTwo(6)+"%)");
+        return (hash*100/Helper.getPowerOfTwo(6)+"%)");
     }
 
     /**
@@ -181,8 +181,8 @@ public class Helper {
      * @param i: finger table index
      * @return finger[i].start's identifier
      */
-    public static long ithStart (long nodeid, int i) {
-        return (nodeid + powerOfTwo.get(i-1)) % powerOfTwo.get(6);
+    public static int ithStart (long nodeid, int i) {
+        return Math.toIntExact((nodeid + powerOfTwo.get(i-1)) % powerOfTwo.get(6));
     }
 
     /**

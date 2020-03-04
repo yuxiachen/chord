@@ -13,12 +13,17 @@ public class Node {
     private long localId;
     private InetSocketAddress localAddress;
     private InetSocketAddress predecessor;
+    private String predecessorText;
     private HashMap<Integer, InetSocketAddress> finger;
 
     private Listener listener;
     private Stabilize stabilize;
     private FixFingers fix_fingers;
     private AskPredecessor ask_predecessor;
+
+    private int[] ithStarts = new int[6];
+    private InetSocketAddress[] fingers = new InetSocketAddress[6];
+    private String[] IDs = new String[6];
 
     /**
      * Constructor
@@ -43,6 +48,22 @@ public class Node {
         stabilize = new Stabilize(this);
         fix_fingers = new FixFingers(this);
         ask_predecessor = new AskPredecessor(this);
+    }
+
+    public int[] getIthStarts() {
+        return ithStarts;
+    }
+
+    public InetSocketAddress[] getFingers() {
+        return fingers;
+    }
+
+    public String[] getIDs() {
+        return IDs;
+    }
+
+    public String getPredecessorText() {
+        return predecessorText;
     }
 
     /**
@@ -417,59 +438,39 @@ public class Node {
      */
 
     public void printNeighbors () {
-        System.out.println("\nYou are listening on port "+localAddress.getPort()+"."
-                + "\nYour position is "+Helper.hexIdAndPosition(localAddress)+".");
+
         InetSocketAddress successor = finger.get(1);
 
         // if it cannot find both predecessor and successor
         if ((predecessor == null || predecessor.equals(localAddress)) && (successor == null || successor.equals(localAddress))) {
-            System.out.println("Your predecessor is yourself.");
-            System.out.println("Your successor is yourself.");
-
+            predecessorText = "Yourself";
         }
 
         // else, it can find either predecessor or successor
         else {
             if (predecessor != null) {
-                System.out.println("Your predecessor is node "+predecessor.getAddress().toString()+", "
-                        + "port "+predecessor.getPort()+ ", position "+Helper.hexIdAndPosition(predecessor)+".");
+                predecessorText = predecessor.getAddress().toString()+", "
+                        + "port "+predecessor.getPort()+ ", position "+Helper.hexIdAndPosition(predecessor);
             }
             else {
-                System.out.println("Your predecessor is updating.");
-            }
-
-            if (successor != null) {
-                System.out.println("Your successor is node "+successor.getAddress().toString()+", "
-                        + "port "+successor.getPort()+ ", position "+Helper.hexIdAndPosition(successor)+".");
-            }
-            else {
-                System.out.println("Your successor is updating.");
+                predecessorText = "updating...";
             }
         }
     }
 
     public void printDataStructure () {
-        System.out.println("\n==============================================================");
-        System.out.println("\nLOCAL:\t\t\t\t"+localAddress.toString()+"\t"+Helper.hexIdAndPosition(localAddress));
-        if (predecessor != null)
-            System.out.println("\nPREDECESSOR:\t\t\t"+predecessor.toString()+"\t"+Helper.hexIdAndPosition(predecessor));
-        else
-            System.out.println("\nPREDECESSOR:\t\t\tNULL");
-        System.out.println("\nFINGER TABLE:\n");
-        for (int i = 1; i <= 6; i++) {
-            long ithstart = Helper.ithStart(Helper.hashSocketAddress(localAddress),i);
-            InetSocketAddress f = finger.get(i);
-            StringBuilder sb = new StringBuilder();
-            sb.append(i+"\t"+ Helper.longTo8DigitHex(ithstart)+"\t\t");
-            if (f!= null)
-                sb.append(f.toString()+"\t"+Helper.hexIdAndPosition(f));
-
-            else
-                sb.append("NULL");
-            System.out.println(sb.toString());
+        for (int i = 0; i < 6; i++) {
+            ithStarts[i] = Helper.ithStart(Helper.hashSocketAddress(localAddress), i + 1);
+            if (finger.get(i) != null) {
+                fingers[i] = finger.get(i);
+                IDs[i] = Helper.hexIdAndPosition(fingers[i]);
+            } else {
+                fingers[i] = null;
+                IDs[i] = "Null";
+            }
         }
-        System.out.println("\n==============================================================\n");
     }
+
 
     /**
      * Stop this node's all threads.
