@@ -284,6 +284,7 @@ public class ChordForm extends javax.swing.JFrame {
 
         // try to join ring from contact node
         boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
+        String alterMessage = "";
 
         if (!successful_join) {
             alertMessage = "Cannot connect with node you are trying to contact. Now exit.";
@@ -295,7 +296,6 @@ public class ChordForm extends javax.swing.JFrame {
             updateFingerTable();
         }
         JOptionPane.showMessageDialog(null, alertMessage);
-
     }//GEN-LAST:event_bJoinMouseClicked
 
     /**
