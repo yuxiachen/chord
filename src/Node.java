@@ -459,8 +459,8 @@ public class Node {
     }
 
     public void printDataStructure () {
-        for (int i = 1; i <= 6; i++) {
-            ithStarts[i] = Helper.ithStart(Helper.hashSocketAddress(localAddress),i);
+        for (int i = 0; i < 6; i++) {
+            ithStarts[i] = Helper.ithStart(Helper.hashSocketAddress(localAddress), i + 1);
             if (finger.get(i) != null) {
                 fingers[i] = finger.get(i);
                 IDs[i] = Helper.hexIdAndPosition(fingers[i]);
