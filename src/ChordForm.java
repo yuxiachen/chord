@@ -18,11 +18,7 @@ public class ChordForm extends javax.swing.JFrame {
     /**
      * Creates new form ChordForm
      */
-    
-    String ip = null;
-    String port = null;
-    Node newNode = null;
-    
+
     public ChordForm() {
         initComponents();
     }
@@ -259,8 +255,6 @@ public class ChordForm extends javax.swing.JFrame {
         }
         m_node = new Node (Helper.createSocketAddress(local_ip+":"+"8000"));
 
-
-
         //get the contact address
         String ip = textIp.getText();
         String port = textPort.getText();
@@ -268,7 +262,7 @@ public class ChordForm extends javax.swing.JFrame {
         System.out.println(addr);
 
         // try to join ring from contact node
-        boolean successful_join = newNode.join(Helper.createSocketAddress(addr));
+        boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
 
         if (!successful_join) {
             System.out.println("Cannot connect with node you are trying to contact. Now exit.");
@@ -279,17 +273,8 @@ public class ChordForm extends javax.swing.JFrame {
         else{
             System.out.println("Joining the Chord ring.");
             System.out.println("Local IP: "+local_ip);
-            newNode.printNeighbors();
+            m_node.printNeighbors();
         }
-
-
-
-
-
-
-
-        
-
     }//GEN-LAST:event_bJoinMouseClicked
 
     /**
