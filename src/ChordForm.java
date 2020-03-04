@@ -9,10 +9,12 @@
  * @author mengdi
  */
 
+import javax.swing.*;
+import java.net.InetSocketAddress;
 import java.net.InetAddress;
 
 import java.net.UnknownHostException;
-//import java.net.InetSocketAddress;
+
 public class ChordForm extends javax.swing.JFrame {
 
     /**
@@ -215,6 +217,26 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCreateActionPerformed
         // TODO add your handling code here:
+        m_helper = new Helper();
+
+        // get local machine's ip
+        String local_ip = "192.168.1.31";
+        String port = "8888";
+
+        // create node
+        m_node = new Node (Helper.createSocketAddress(local_ip+":"+ port));
+        m_contact = m_node.getAddress();
+        // try to join ring from contact node
+        boolean successful_join = m_node.join(m_contact);
+        String alterMessage = "";
+        // fail to join contact node
+        if (!successful_join) {
+            alterMessage = "Cannot Create the ring. Now exit.";
+        } else {
+            alterMessage = "Ring created successfully!";
+        }
+        JOptionPane.showMessageDialog(null, alterMessage);
+
     }//GEN-LAST:event_bCreateActionPerformed
 
     private void bJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJoinActionPerformed
@@ -223,6 +245,9 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         // TODO add your handling code here:
+        m_node.stopAllThreads();
+        System.out.println("Leaving the ring...");
+        JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
     }//GEN-LAST:event_bLeaveActionPerformed
 
     private void bQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bQueryActionPerformed
