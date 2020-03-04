@@ -156,7 +156,7 @@ public class Helper {
      */
     public static String hexIdAndPosition (InetSocketAddress addr) {
         long hash = hashSocketAddress(addr);
-        return (longTo8DigitHex(hash)+" ("+hash*100/Helper.getPowerOfTwo(6)+"%)");
+        return (hash*100/Helper.getPowerOfTwo(6)+"%)");
     }
 
     /**
