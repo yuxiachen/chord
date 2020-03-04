@@ -256,11 +256,6 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCreateActionPerformed
         // get local machine's ip
-        String local_ip = "172.31.226.155";
-        String port = "8888";
-
-        // create node
-        m_node = new Node (Helper.createSocketAddress(local_ip+":"+ port));
         m_contact = m_node.getAddress();
         // try to join ring from contact node
         boolean successful_join = m_node.join(m_contact);
