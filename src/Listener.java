@@ -32,7 +32,7 @@ public class Listener extends Thread {
     @Override
     public void run() {
         Socket talkSocket = null;
-        while (alive) {
+        while (alive && !serverSocket.isClosed()) {
             try {
                 talkSocket = serverSocket.accept();
             } catch (IOException e) {
@@ -48,10 +48,12 @@ public class Listener extends Thread {
 
     public void toDie() {
         alive = false;
+        /**
         try{
             serverSocket.close();
         } catch (Exception e) {
             System.err.println("Error closing stream : " + e.getMessage());
         }
+         **/
     }
 }

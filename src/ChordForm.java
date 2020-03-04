@@ -233,9 +233,10 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         m_node.stopAllThreads();
-        m_node = null;
+        node_alive = false;
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
+        System.exit(0);
     }//GEN-LAST:event_bLeaveActionPerformed
 
     private void bJoinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJoinActionPerformed
@@ -269,6 +270,7 @@ public class ChordForm extends javax.swing.JFrame {
         if (!successful_join) {
             alertMessage = "Cannot Create the ring. Now exit.";
         } else {
+            node_alive = true;
             alertMessage = "Ring created successfully!";
             updateFingerTable();
         }
@@ -293,6 +295,7 @@ public class ChordForm extends javax.swing.JFrame {
 
         // print join info
         else{
+            node_alive = true;
             alertMessage = "Joining the Chord ring successfully!";
             updateFingerTable();
         }
@@ -337,7 +340,7 @@ public class ChordForm extends javax.swing.JFrame {
     public void updateFingerTable() {
     Thread thread = new Thread(){
         public void run(){
-            while(m_node != null){
+            while(node_alive){
                 m_node.printDataStructure();
                 int[] ithStarts = m_node.getIthStarts();
                 InetSocketAddress[] fingers = m_node.getFingers();
@@ -454,6 +457,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
     private static Helper m_helper = new Helper();
+    private static boolean node_alive = false;
     private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));;
     private static InetSocketAddress m_contact;
     private static String result_queryOne;
