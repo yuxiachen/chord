@@ -235,6 +235,7 @@ public class ChordForm extends javax.swing.JFrame {
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         // TODO add your handling code here:
         m_node.stopAllThreads();
+        m_node = null;
         System.out.println("Leaving the ring...");
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
     }//GEN-LAST:event_bLeaveActionPerformed
