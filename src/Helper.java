@@ -182,7 +182,7 @@ public class Helper {
      * @return finger[i].start's identifier
      */
     public static int ithStart (long nodeid, int i) {
-        return Math.toIntExact((nodeid + powerOfTwo.get(i - 1)) % powerOfTwo.get(6));
+        return Math.toIntExact((nodeid + powerOfTwo.get(i)) % powerOfTwo.get(6));
     }
 
     /**
