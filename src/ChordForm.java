@@ -10,8 +10,9 @@
  */
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+
 import java.net.UnknownHostException;
+//import java.net.InetSocketAddress;
 public class ChordForm extends javax.swing.JFrame {
 
     /**
@@ -43,7 +44,7 @@ public class ChordForm extends javax.swing.JFrame {
         textPort = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        textKey = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         bQuery = new javax.swing.JButton();
         tPrint = new javax.swing.JTextField();
@@ -157,7 +158,7 @@ public class ChordForm extends javax.swing.JFrame {
                                                 .addGap(2, 2, 2)
                                                 .addComponent(jLabel3)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(textKey, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGap(65, 65, 65))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel1)
@@ -200,7 +201,7 @@ public class ChordForm extends javax.swing.JFrame {
                                 .addComponent(bJoin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(textKey, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)
                             .addComponent(bQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
@@ -256,13 +257,13 @@ public class ChordForm extends javax.swing.JFrame {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        newNode = new Node (Helper.createSocketAddress(local_ip+":"+"8000"));
+        m_node = new Node (Helper.createSocketAddress(local_ip+":"+"8000"));
 
 
 
         //get the contact address
-        ip = textIp.getText();
-        port = textPort.getText();
+        String ip = textIp.getText();
+        String port = textPort.getText();
         String addr = ip + ":" + port;
         System.out.println(addr);
 
@@ -298,7 +299,7 @@ public class ChordForm extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -317,7 +318,6 @@ public class ChordForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ChordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -339,7 +339,11 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTable tFinger;
     private javax.swing.JTextField tPrint;
     private javax.swing.JTextField textIp;
-    private javax.swing.JTextField textKey;
+    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
+
+    private static Node m_node;
+    private static InetSocketAddress m_contact;
+    private static Helper m_helper;
 }
