@@ -301,18 +301,17 @@ public class ChordForm extends javax.swing.JFrame {
 
         // try to join ring from contact node
         boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
+        String alterMessage = "";
 
         if (!successful_join) {
-            System.out.println("Cannot connect with node you are trying to contact. Now exit.");
-            System.exit(0);
+            alterMessage = "Cannot connect with node you are trying to contact. Now exit.";
         }
 
         // print join info
         else{
-            System.out.println("Joining the Chord ring.");
-            System.out.println("Local IP: "+local_ip);
-            m_node.printNeighbors();
+            alterMessage = "Joining the Chord ring.";
         }
+        JOptionPane.showMessageDialog(null, alterMessage);
     }//GEN-LAST:event_bJoinMouseClicked
 
     /**
