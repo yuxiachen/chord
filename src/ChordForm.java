@@ -233,7 +233,6 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         m_node.stopAllThreads();
-        node_alive = false;
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
         System.exit(0);
@@ -337,7 +336,7 @@ public class ChordForm extends javax.swing.JFrame {
     }
 
     public void updateFingerTable() {
-    Thread thread = new Thread(){
+        Thread thread = new Thread(){
         public void run(){
             while(m_node != null){
                 m_node.printDataStructure();
@@ -456,7 +455,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
     private static Helper m_helper = new Helper();
-    private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));
+    private static Node m_node = new Node (Helper.createSocketAddress("172.26.24.225"+":"+"6000"));
     private static InetSocketAddress m_contact;
     private static String result_queryOne;
     private String alertMessage =  "";
