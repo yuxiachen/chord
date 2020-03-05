@@ -8,22 +8,22 @@ import java.util.Random;
 
 public class FixFingers extends Thread{
 
-    private Node local;
-    Random random;
     boolean alive;
+    private Node node;
 
     public FixFingers (Node node) {
-        local = node;
+        this.node = node;
         alive = true;
-        random = new Random();
     }
 
     @Override
     public void run() {
+        Random random = new Random();
         while (alive) {
+            // randomly generate a int between [0,5] and updated corresponding entry of node's finger table
             int i = random.nextInt(6);
-            InetSocketAddress ithfinger = local.find_successor(Helper.ithStart(local.getId(), i));
-            local.updateFingers(i, ithfinger);
+            InetSocketAddress ithFinger = node.find_successor(Helper.ithStart(node.getId(), i));
+            node.updateFingers(i, ithFinger);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
