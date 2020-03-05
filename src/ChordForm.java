@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.net.InetSocketAddress;
-import java.net.InetAddress;
-
-import java.net.UnknownHostException;
 /**
- *
+ * Class to launch the UI of the chord, which offer the interface to create a ring, join an existing ring,
+ * query the location (which node it saved in) of a key, and leave the ring.
  * @author mengdi
  */
 public class ChordForm extends javax.swing.JFrame {
@@ -42,15 +41,13 @@ public class ChordForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         bQuery = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tPrint = new javax.swing.JTextArea("Query Result: ");
+        tPrint = new javax.swing.JTextArea();
         t_predecessor = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tFinger = new javax.swing.JTable();
         bExit = new javax.swing.JButton();
         bCreate = new javax.swing.JButton();
-
-        result_queryOne = "";
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -232,8 +229,8 @@ public class ChordForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
-        m_node.stopAllThreads();
-        node_alive = false;
+        node.stopAllThreads();
+        node = null;
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
         System.exit(0);
@@ -252,49 +249,37 @@ public class ChordForm extends javax.swing.JFrame {
     }//GEN-LAST:event_textPortActionPerformed
 
     private void bQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bQueryActionPerformed
-        // TODO add your handling code here:
-        Query();
-        tPrint.append(result_queryOne);
+        // call the query function and present the result.
+        tPrint.setText("Query Result: " + query());
     }//GEN-LAST:event_bQueryActionPerformed
 
     private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
-        // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_bExitActionPerformed
 
     private void bCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCreateActionPerformed
-        // get local machine's ip
-        m_contact = m_node.getAddress();
-        // try to join ring from contact node
-        boolean successful_join = m_node.join(m_contact);
-        // fail to join contact node
-        if (!successful_join) {
-            alertMessage = "Cannot Create the ring. Now exit.";
-        } else {
+        // get local machine's address and use itself as the contact node to create the ring.
+        contact = node.getAddress();
+        boolean successful_join = node.join(contact);
+        if (!successful_join) { // fail to join contact node
+            alertMessage = "Cannot Create the ring, please check your machine's address.";
+        } else { // if join successfully, periodically refresh the table list to show the updated finger table
             alertMessage = "Ring created successfully!";
             updateFingerTable();
         }
         JOptionPane.showMessageDialog(null, alertMessage);
-
     }//GEN-LAST:event_bCreateActionPerformed
 
     private void bJoinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bJoinMouseClicked
-        // TODO add your handling code here:
-        //get the contact address
+        // Join the node using the address of a contact node
         String ip = textIp.getText();
         String port = textPort.getText();
-        String addr = ip + ":" + port;
+        String contactNode = ip + ":" + port;
 
-        // try to join ring from contact node
-        boolean successful_join = m_node.join(Helper.createSocketAddress(addr));
-        String alterMessage = "";
-
+        boolean successful_join = node.join(Helper.createSocketAddress(contactNode));
         if (!successful_join) {
             alertMessage = "Cannot connect with node you are trying to contact. Now exit.";
-        }
-
-        // print join info
-        else{
+        } else{
             alertMessage = "Joining the Chord ring successfully!";
             updateFingerTable();
         }
@@ -305,11 +290,6 @@ public class ChordForm extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -337,13 +317,12 @@ public class ChordForm extends javax.swing.JFrame {
     }
 
     public void updateFingerTable() {
-    Thread thread = new Thread(){
-        public void run(){
-            while(m_node != null){
-                m_node.printDataStructure();
-                int[] ithStarts = m_node.getIthStarts();
-                InetSocketAddress[] fingers = m_node.getFingers();
-                String[] IDs = m_node.getIDs();
+        Thread thread = new Thread(() -> {
+            while(node != null){
+                node.printDataStructure();
+                int[] ithStarts = node.getIthStarts();
+                InetSocketAddress[] fingers = node.getFingers();
+                String[] IDs = node.getIDs();
                 Object[][] fingerTable = new String[6][3];
                 for (int i = 0; i < 6; i++) {
                     fingerTable[i][0] = String.valueOf(ithStarts[i]);
@@ -354,8 +333,8 @@ public class ChordForm extends javax.swing.JFrame {
                 String[] columnNames = {"Start", "IP : Port", "ID & Position"};
                 DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
                 tFinger.setModel(model);
-                m_node.printNeighbors();
-                String pred = m_node.getPredecessorText();
+                node.printNeighbors();
+                String pred = node.getPredecessorText();
                 t_predecessor.setText(pred);
                 try {
                     Thread.sleep(5000);
@@ -363,35 +342,38 @@ public class ChordForm extends javax.swing.JFrame {
                     e.printStackTrace();
                 }
             }
-        }
-    };
-    thread.start();
-}
+        });
+        thread.start();
+    }
 
-    private void Query() {
-        InetSocketAddress localAddress = m_node.getAddress();
+    /**
+     *  Query function to search for the location of a given key
+     * @return the query result (the location of the key)
+     */
+    private String query() {
+        InetSocketAddress localAddress = node.getAddress();
         if (localAddress == null) {
-            System.out.println("Cannot find address you are trying to contact. Now exit.");
-            System.exit(0);;
+            alertMessage = "You are not in the ring. Please create or join an existing ring in order to do the query";
+            JOptionPane.showMessageDialog(null, alertMessage);
+            return "";
         }
-        // successfully constructed socket address of the node we are
-        // trying to contact, check if it's alive
+        // Check if the machine is still alive in the ring
         String response = Helper.sendRequest(localAddress, "KEEP");
         if (response == null || !response.equals("ALIVE"))  {
-            System.out.println("\nCannot find node you are trying to contact. Now exit.\n");
-            System.exit(0);
+            alertMessage = "You are not alive anymore, please join the ring again in order to do the query.";
+            JOptionPane.showMessageDialog(null, alertMessage);
+            return  "";
         }
-        // it's alive, print connection info
-        System.out.println("Connection to node "+localAddress.getAddress().toString()+", port " +
-                localAddress.getPort()+", position "+Helper.hexIdAndPosition(localAddress)+".");
-        // check if system is stable
+
+        // Local machine is one the ring. Now check if the system is stable
         boolean pred = false;
         boolean succ = false;
         InetSocketAddress pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
         InetSocketAddress succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
         if (pred_addr == null || succ_addr == null) {
-            System.out.println("The node your are contacting is disconnected. Now exit.");
-            System.exit(0);
+            alertMessage = "Local machine is disconnected from the ring.";
+            JOptionPane.showMessageDialog(null, alertMessage);
+            return  "";
         }
         if (pred_addr.equals(localAddress))
             pred = true;
@@ -405,17 +387,12 @@ public class ChordForm extends javax.swing.JFrame {
             pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
             succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
             if (pred_addr == null || succ_addr == null) {
-                System.out.println("The node your are contacting is disconnected. Now exit.");
-                System.exit(0);
+                alertMessage = "Local machine is disconnected from the ring.";
+                JOptionPane.showMessageDialog(null, alertMessage);
+                return  "";
             }
-            if (pred_addr.equals(localAddress))
-                pred = true;
-            else
-                pred = false;
-            if (succ_addr.equals(localAddress))
-                succ = true;
-            else
-                succ = false;
+            pred = pred_addr.equals(localAddress) ? true : false;
+            succ = succ_addr.equals(localAddress) ? true : false;
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -423,16 +400,16 @@ public class ChordForm extends javax.swing.JFrame {
         }
         String command = textKey.getText();
         long hash = Helper.hashString(command);
-        System.out.println("\nHash value is "+Long.toHexString(hash));
         InetSocketAddress result = Helper.requestAddress(localAddress, "FINDSUCC_"+hash);
 
         // if fail to send request, local node is disconnected, exit
         if (result == null) {
-            System.out.println("The node your are contacting is disconnected. Now exit.");
-            System.exit(0);
+            alertMessage = "The node your are contacting is disconnected.";
+            JOptionPane.showMessageDialog(null, alertMessage);
+            return  "";
         }
-        // print out response
-        result_queryOne = "\nNode "+result.getAddress().toString()+"\nPort: " +
+        // return your response and print it in the panel
+        return "\nNode "+result.getAddress().toString()+"\nPort: " +
                 result.getPort()+"\nPosition: " + Helper.hexIdAndPosition(result );
     }
 
@@ -455,9 +432,8 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textKey;
     private javax.swing.JTextField textPort;
     // End of variables declaration//GEN-END:variables
-    private static Helper m_helper = new Helper();
-    private static Node m_node = new Node (Helper.createSocketAddress("172.31.226.155"+":"+"8000"));
-    private static InetSocketAddress m_contact;
-    private static String result_queryOne;
+    private static Helper helper = new Helper();
+    private static Node node = new Node (Helper.createSocketAddress("192.168.1.31"+":"+"8000"));
+    private static InetSocketAddress contact;
     private String alertMessage =  "";
 }
