@@ -233,7 +233,7 @@ public class ChordForm extends javax.swing.JFrame {
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
         m_node.stopAllThreads();
-        node_alive = false;
+        m_node = null;
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
         System.exit(0);
@@ -337,36 +337,36 @@ public class ChordForm extends javax.swing.JFrame {
     }
 
     public void updateFingerTable() {
-    Thread thread = new Thread(){
-        public void run(){
-            while(m_node != null){
-                m_node.printDataStructure();
-                int[] ithStarts = m_node.getIthStarts();
-                InetSocketAddress[] fingers = m_node.getFingers();
-                String[] IDs = m_node.getIDs();
-                Object[][] fingerTable = new String[6][3];
-                for (int i = 0; i < 6; i++) {
-                    fingerTable[i][0] = String.valueOf(ithStarts[i]);
-                    fingerTable[i][1] = (fingers[i] == null)? "Null" : fingers[i].getAddress().toString().substring(1)
-                            + ":" + fingers[i].getPort();
-                    fingerTable[i][2] = IDs[i];
-                }
-                String[] columnNames = {"Start", "IP : Port", "ID & Position"};
-                DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
-                tFinger.setModel(model);
-                m_node.printNeighbors();
-                String pred = m_node.getPredecessorText();
-                t_predecessor.setText(pred);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        Thread thread = new Thread(){
+            public void run(){
+                while(m_node != null){
+                    m_node.printDataStructure();
+                    int[] ithStarts = m_node.getIthStarts();
+                    InetSocketAddress[] fingers = m_node.getFingers();
+                    String[] IDs = m_node.getIDs();
+                    Object[][] fingerTable = new String[6][3];
+                    for (int i = 0; i < 6; i++) {
+                        fingerTable[i][0] = String.valueOf(ithStarts[i]);
+                        fingerTable[i][1] = (fingers[i] == null)? "Null" : fingers[i].getAddress().toString().substring(1)
+                                + ":" + fingers[i].getPort();
+                        fingerTable[i][2] = IDs[i];
+                    }
+                    String[] columnNames = {"Start", "IP : Port", "ID & Position"};
+                    DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
+                    tFinger.setModel(model);
+                    m_node.printNeighbors();
+                    String pred = m_node.getPredecessorText();
+                    t_predecessor.setText(pred);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
-    };
-    thread.start();
-}
+        };
+        thread.start();
+    }
 
     private void Query() {
         InetSocketAddress localAddress = m_node.getAddress();
