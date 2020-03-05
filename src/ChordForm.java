@@ -229,8 +229,10 @@ public class ChordForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeaveActionPerformed
+
         node.stopAllThreads();
         node = null;
+
         alertMessage = "Leave the ring successfully!";
         JOptionPane.showMessageDialog(null, "Leave the ring successfully!");
         System.exit(0);
@@ -317,6 +319,7 @@ public class ChordForm extends javax.swing.JFrame {
     }
 
     public void updateFingerTable() {
+
         Thread thread = new Thread(() -> {
             while(node != null){
                 node.printDataStructure();
@@ -343,6 +346,7 @@ public class ChordForm extends javax.swing.JFrame {
                 }
             }
         });
+
         thread.start();
     }
 

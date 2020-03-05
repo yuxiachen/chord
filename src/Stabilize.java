@@ -1,65 +1,49 @@
 import java.net.InetSocketAddress;
 
-/**
- * Stabilize thread that periodically asks successor for its predecessor
- * and determine if current node should update or delete its successor.
- * @author Chuan Xia
- *
- */
-
 public class Stabilize extends Thread {
-
-    private Node local;
+    private Node localNode;
     private boolean alive;
 
-    public Stabilize(Node _local) {
-        local = _local;
+    public Stabilize(Node local) {
+        localNode = local;
         alive = true;
     }
 
     @Override
     public void run() {
         while (alive) {
-            InetSocketAddress successor = local.getSuccessor();
-            if (successor == null || successor.equals(local.getAddress())) {
-                local.updateFingers(-3, null); //fill
+            InetSocketAddress successor = localNode.getSuccessor();
+            if (successor == null || successor.equals(localNode.getAddress())) {
+                localNode.updateFingers(-3, null); //call fillSuccessor()
             }
-            successor = local.getSuccessor();
-            if (successor != null && !successor.equals(local.getAddress())) {
-
-                // try to get my successor's predecessor
-                InetSocketAddress x = Helper.requestAddress(successor, "YOURPRE");
-
-                // if bad connection with successor! delete successor
-                if (x == null) {
-                    local.updateFingers(-1, null);
+            successor = localNode.getSuccessor();
+            if (successor != null && !successor.equals(localNode.getAddress())) {
+                InetSocketAddress nd = Helper.requestAddress(successor, "YOURPRE");
+                // if cannot get the address of successor, delete it
+                if (nd == null) {
+                    localNode.updateFingers(-1, null);
                 }
-
-                // else if successor's predecessor is not itself
-                else if (!x.equals(successor)) {
-                    long local_id = Helper.hashSocketAddress(local.getAddress());
-                    long successor_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(successor), local_id);
-                    long x_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(x),local_id);
-                    if (x_relative_id>0 && x_relative_id < successor_relative_id) {
-                        local.updateFingers(1,x);
+                // if successor's predecessor is not the successor itself
+                else if (!nd.equals(successor)) {
+                    long localID = Helper.hashSocketAddress(localNode.getAddress());
+                    long successor_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(successor), localID);
+                    long x_node_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(nd),localID);
+                    if (x_node_relative_id>0 && x_node_relative_id < successor_relative_id) {
+                        localNode.updateFingers(1, nd);
                     }
                 }
-
-                // successor's predecessor is successor itself, then notify successor
+                // if successor's predecessor is the successor itself, notify successor
                 else {
-                    local.notify(successor);
+                    localNode.notify(successor);
                 }
             }
-
             try {
                 Thread.sleep(60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
     }
-
     public void toDie() {
         alive = false;
     }
