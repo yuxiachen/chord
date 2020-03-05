@@ -428,7 +428,7 @@ public class Node {
 
     public InetSocketAddress getSuccessor() {
         if (finger != null && finger.size() > 0) {
-            return finger.get(1);
+            return finger.get(0);
         }
         return null;
     }
