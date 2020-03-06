@@ -21,7 +21,6 @@ public class Node {
 
         localAddress = address;
         localId = Helper.hashSocketAddress(localAddress);
-        // initialize an empty finge table
         finger = new HashMap<Integer, InetSocketAddress>();
         for (int i = 0; i < 6; i++) {
             updateIthFinger (i, null);
@@ -55,7 +54,7 @@ public class Node {
         if (message != null && !message.equals(localAddress)) {
             InetSocketAddress successor = Helper.requestAddress(message, "FINDSUCC_" + localId);
             if (successor == null)  {
-                System.out.println("\nCannot find node you are trying to message. Please exit.\n");
+                System.out.println("\nYou are not able to find the node you are trying to contact.\n");
                 return false;
             }
             updateIthFinger(1, successor);
@@ -309,7 +308,7 @@ public class Node {
 
     public InetSocketAddress getSuccessor() {
         if (finger != null && finger.size() > 0) {
-            return finger.get(1);
+            return finger.get(0);
         }
         return null;
     }

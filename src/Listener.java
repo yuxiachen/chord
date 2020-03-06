@@ -2,58 +2,46 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.server.ExportException;
 
 /**
- * Listener thread that keeps listening to a port and asks talker thread to process
- * when a request is accepted.
+ * Listener thread keeps listening at a port and new a talker thread to process
+ * the coming request
  */
 
 public class Listener extends Thread {
 
-    private Node local;
+    private Node node;
     private ServerSocket serverSocket;
     private boolean alive;
 
-    public Listener (Node n) {
-        local = n;
+    public Listener (Node node) {
+        this.node = node;
         alive = true;
-        InetSocketAddress localAddress = local.getAddress();
+        InetSocketAddress localAddress = node.getAddress();
         int port = localAddress.getPort();
 
-        //open server/listener socket
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            throw new RuntimeException("\nCannot open listener port "+port+". Now exit.\n", e);
+            System.err.println("Cannot open listener at port: " + port + ". " + e.getMessage());
         }
     }
 
     @Override
     public void run() {
-        Socket talkSocket = null;
+        Socket socket = null;
         while (alive && !serverSocket.isClosed()) {
             try {
-                talkSocket = serverSocket.accept();
+                socket = serverSocket.accept();
+                new Thread(new Talker(socket, node)).start();
             } catch (IOException e) {
-                throw new RuntimeException(
-                        "Cannot accepting connection", e);
+                System.err.println("Cannot accepting connection: " + e.getMessage());
             }
-
-            //new talker
-            new Thread(new Talker(talkSocket, local)).start();
         }
 
     }
 
     public void toDie() {
         alive = false;
-        /**
-        try{
-            serverSocket.close();
-        } catch (Exception e) {
-            System.err.println("Error closing stream : " + e.getMessage());
-        }
-         **/
     }
 }
