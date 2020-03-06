@@ -29,7 +29,7 @@ public class Stabilize extends Thread {
                     long successor_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(successor), localID);
                     long x_node_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(nd),localID);
                     if (x_node_relative_id>0 && x_node_relative_id < successor_relative_id) {
-                        localNode.updateFingers(1, nd);
+                        localNode.updateFingers(0, nd);
                     }
                 }
                 // if successor's predecessor is the successor itself, notify successor

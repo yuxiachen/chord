@@ -216,14 +216,14 @@ public class Node {
         if (successor == null)
             return;
         // find the last existence of successor in the finger table
-        int i = 6;
-        for (i = 6; i > 0; i--) {
+        int i = 5;
+        for (i = 5; i >= 0; i--) {
             InetSocketAddress ithfinger = finger.get(i);
             if (ithfinger != null && ithfinger.equals(successor))
                 break;
         }
         // delete it, from the last existence to the first one
-        for (int j = i; j >= 1 ; j--) {
+        for (int j = i; j >= 0 ; j--) {
             updateIthFinger(j, null);
         }
         // if predecessor is successor, delete it
@@ -252,13 +252,13 @@ public class Node {
                 }
             }
             // update successor
-            updateIthFinger(1, p);
+            updateIthFinger(0, p);
         }
     }
 
     // Delete a node from the finger table, here "delete" means deleting all existence of this node
     private void deleteCertainFinger(InetSocketAddress f) {
-        for (int i = 6; i > 0; i--) {
+        for (int i = 5; i >= 0; i--) {
             InetSocketAddress ithfinger = finger.get(i);
             if (ithfinger != null && ithfinger.equals(f))
                 finger.put(i, null);
@@ -269,10 +269,10 @@ public class Node {
     private void fillSuccessor() {
         InetSocketAddress successor = this.getSuccessor();
         if (successor == null || successor.equals(localAddress)) {
-            for (int i = 2; i <= 6; i++) {
+            for (int i = 1; i <= 5; i++) {
                 InetSocketAddress ithfinger = finger.get(i);
                 if (ithfinger!=null && !ithfinger.equals(localAddress)) {
-                    for (int j = i-1; j >=1; j--) {
+                    for (int j = i-1; j >= 0; j--) {
                         updateIthFinger(j, ithfinger);
                     }
                     break;
@@ -281,7 +281,7 @@ public class Node {
         }
         successor = getSuccessor();
         if ((successor == null || successor.equals(localAddress)) && predecessor!=null && !predecessor.equals(localAddress)) {
-            updateIthFinger(1, predecessor);
+            updateIthFinger(0, predecessor);
         }
     }
 
@@ -314,7 +314,7 @@ public class Node {
     }
 
     public void printNeighbors () {
-        InetSocketAddress successor = finger.get(1);
+        InetSocketAddress successor = finger.get(0);
         // if it cannot find both predecessor and successor
         if ((predecessor == null || predecessor.equals(localAddress)) && (successor == null || successor.equals(localAddress))) {
             predecessorText = "Yourself";
