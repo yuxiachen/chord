@@ -3,10 +3,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * Listener thread keeps listening at a port and new a talker thread to process
- * the coming request
- */
+//Listener thread keeps listening at a port and new a talker thread to process the coming request
 
 public class Listener extends Thread {
 

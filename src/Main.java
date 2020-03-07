@@ -4,18 +4,11 @@
  * and open the template in the editor.
  */
 
-/**
- * Main function init the UI
- * @author mengdi
- */
-public class Main {
+//Main function init the UI
 
-    /**
-     * @param args the command line arguments
-     */
+public class Main {
     public static void main(String[] args) {
         ChordForm cf = new ChordForm();
         cf.setVisible(true);
     }
-    
 }

@@ -4,24 +4,19 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-/**
- * Talker thread processes request accepted by listener and writes
- * response to socket.
- */
+//Talker thread processes request accepted by listener and writes response to socket.
 
 public class Talker implements Runnable{
 
     Socket socket;
     private Node node;
 
-    public Talker(Socket socket, Node node)
-    {
+    public Talker(Socket socket, Node node) {
         this.socket = socket;
         this.node = node;
     }
 
-    public void run()
-    {
+    public void run() {
         try {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
@@ -37,8 +32,7 @@ public class Talker implements Runnable{
         }
     }
 
-    private String processRequest(String request)
-    {
+    private String processRequest(String request) {
         InetSocketAddress result = null;
         String ret = null;
         // if the request is null, return null
@@ -53,10 +47,8 @@ public class Talker implements Runnable{
             String ip = result.getAddress().toString();
             int port = result.getPort();
             ret = "MYCLOSEST_"+ip+":"+port;
-        }
-        // if request is looking for the successor of local node, call the getSuccessor method to get the first node
-        // in the finger table
-        else if (request.startsWith("YOURSUCC")) {
+        } else if (request.startsWith("YOURSUCC")) {
+            // if request is looking for the successor of local node, call the getSuccessor method to get the first node in the finger table
             result = node.getSuccessor();
             if (result != null) {
                 String ip = result.getAddress().toString();
@@ -66,37 +58,32 @@ public class Talker implements Runnable{
             else {
                 ret = "NOTHING";
             }
-        }
-        // if request is looking for the predecessor of local node, return the predecessor of the local node
-        else if (request.startsWith("YOURPRE")) {
+        } else if (request.startsWith("YOURPRE")) {
+            // if request is looking for the predecessor of local node, return the predecessor of the local node
             result = node.getPredecessor();
             if (result != null) {
                 String ip = result.getAddress().toString();
                 int port = result.getPort();
                 ret = "MYPRE_"+ip+":"+port;
-            }
-            else {
+            } else {
                 ret = "NOTHING";
             }
-        }
-        // if request is looking for the successor of an id, recursively call the find_successor method of node
-        // in the ring to get the successor of the given id
-        else if (request.startsWith("FINDSUCC")) {
+        } else if (request.startsWith("FINDSUCC")) {
+            // if request is looking for the successor of an id,
+            // recursively call the find_successor method of node in the ring to get the successor of the given id
             long id = Long.parseLong(request.split("_")[1]);
             result = node.find_successor(id);
             String ip = result.getAddress().toString();
             int port = result.getPort();
             ret = "FOUNDSUCC_"+ip+":"+port;
-        }
-        // if request is to notify the local node that it's local node's predecessor,
-        // set local node's predecessor as this caller node.
-        else if (request.startsWith("IAMPRE")) {
+        } else if (request.startsWith("IAMPRE")) {
+            // if request is to notify the local node that it's local node's predecessor,
+            // set local node's predecessor as this caller node.
             InetSocketAddress new_pre = Helper.createSocketAddress(request.split("_")[1]);
             node.notified(new_pre);
             ret = "NOTIFIED";
-        }
-        // if the coming request is checking local node is alive or not, return ALIVE
-        else if (request.startsWith("KEEP")) {
+        } else if (request.startsWith("KEEP")) {
+            // if the coming request is checking local node is alive or not, return ALIVE
             ret = "ALIVE";
         }
         return ret;
