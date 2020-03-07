@@ -1,9 +1,6 @@
 import java.net.InetSocketAddress;
 
-/**
- *  Ask Predecessor thread periodically sends request to node's Predecessor and set node's
- *  predecessor status accordingly.
- */
+// Ask Predecessor thread periodically sends request to node's Predecessor and set node's predecessor status accordingly.
 public class AskPredecessor extends Thread {
     private Node node;
     private boolean alive;

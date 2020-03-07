@@ -1,10 +1,7 @@
 import java.net.InetSocketAddress;
 import java.util.Random;
 
-/**
- * Fixfingers thread runs in the background, and keeps selecting one of the entry of the
- * finger table and update/fix it.
- */
+// Fixfingers thread runs in the background, and keeps selecting one of the entry of the finger table and update/fix it.
 
 public class FixFingers extends Thread{
 

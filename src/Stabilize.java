@@ -22,18 +22,14 @@ public class Stabilize extends Thread {
                 // if cannot get the address of successor, delete it
                 if (nd == null) {
                     localNode.updateFingers(-1, null);
-                }
-                // if successor's predecessor is not the successor itself
-                else if (!nd.equals(successor)) {
+                } else if (!nd.equals(successor)) { // if successor's predecessor is not the successor itself
                     long localID = Helper.hashSocketAddress(localNode.getAddress());
                     long successor_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(successor), localID);
                     long x_node_relative_id = Helper.computeRelativeId(Helper.hashSocketAddress(nd),localID);
                     if (x_node_relative_id>0 && x_node_relative_id < successor_relative_id) {
                         localNode.updateFingers(0, nd);
                     }
-                }
-                // if successor's predecessor is the successor itself, notify successor
-                else {
+                } else { // if successor's predecessor is the successor itself, notify successor
                     localNode.notify(successor);
                 }
             }
