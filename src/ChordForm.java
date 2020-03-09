@@ -261,7 +261,7 @@ public class ChordForm extends javax.swing.JFrame {
         String port = textPort.getText();
         String contactNode = ip + ":" + port;
 
-        boolean successful_join = node.join(Helper.createSocketAddress(contactNode));
+        boolean successful_join = node.join(Util.createSocketAddress(contactNode));
         if (!successful_join) {
             alertMessage = "Cannot connect with node you are trying to contact. Now exit.";
         } else{
@@ -338,7 +338,7 @@ public class ChordForm extends javax.swing.JFrame {
             return "";
         }
         // Check if the machine is still alive in the ring
-        String response = Helper.sendRequest(localAddress, "KEEP");
+        String response = Util.sendRequest(localAddress, "KEEP");
         if (response == null || !response.equals("ALIVE"))  {
             alertMessage = "You are not alive anymore, please join the ring again in order to do the query.";
             JOptionPane.showMessageDialog(null, alertMessage);
@@ -348,8 +348,8 @@ public class ChordForm extends javax.swing.JFrame {
         // Local machine is one the ring. Now check if the system is stable
         boolean pred = false;
         boolean succ = false;
-        InetSocketAddress pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
-        InetSocketAddress succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
+        InetSocketAddress pred_addr = Util.requestAddress(localAddress, "YOURPRE");
+        InetSocketAddress succ_addr = Util.requestAddress(localAddress, "YOURSUCC");
         if (pred_addr == null || succ_addr == null) {
             alertMessage = "Local machine is disconnected from the ring.";
             JOptionPane.showMessageDialog(null, alertMessage);
@@ -364,8 +364,8 @@ public class ChordForm extends javax.swing.JFrame {
         // predecessor and successor or (2) none of them
         while (pred^succ) {
             System.out.println("Waiting for the system to be stable...");
-            pred_addr = Helper.requestAddress(localAddress, "YOURPRE");
-            succ_addr = Helper.requestAddress(localAddress, "YOURSUCC");
+            pred_addr = Util.requestAddress(localAddress, "YOURPRE");
+            succ_addr = Util.requestAddress(localAddress, "YOURSUCC");
             if (pred_addr == null || succ_addr == null) {
                 alertMessage = "Local machine is disconnected from the ring.";
                 JOptionPane.showMessageDialog(null, alertMessage);
@@ -379,8 +379,8 @@ public class ChordForm extends javax.swing.JFrame {
             }
         }
         String command = textKey.getText();
-        long hash = Helper.hashString(command);
-        InetSocketAddress result = Helper.requestAddress(localAddress, "FINDSUCC_"+hash);
+        long hash = Util.hashString(command);
+        InetSocketAddress result = Util.requestAddress(localAddress, "FINDSUCC_"+hash);
 
         // if fail to send request, local node is disconnected, exit
         if (result == null) {
@@ -390,7 +390,7 @@ public class ChordForm extends javax.swing.JFrame {
         }
         // return your response and print it in the panel
         return "\nNode "+result.getAddress().toString()+"\nPort: " +
-                result.getPort()+"\nPosition: " + Helper.hexIdAndPosition(result );
+                result.getPort()+"\nPosition: " + Util.hexIdAndPosition(result );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -412,8 +412,8 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textKey;
     private javax.swing.JTextField textPort;
 
-    private static Helper helper = new Helper();
-    private static Node node = new Node (Helper.createSocketAddress("172.26.24.225" + ":" + "6000"));
+    private static Util util = new Util();
+    private static Node node = new Node (Util.createSocketAddress("192.168.1.31" + ":" + "6000"));
     private static InetSocketAddress contact;
     private String alertMessage =  "";
 }

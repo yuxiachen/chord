@@ -30,7 +30,7 @@ public class Listener extends Thread {
         while (alive && !serverSocket.isClosed()) {
             try {
                 socket = serverSocket.accept();
-                new Thread(new Talker(socket, node)).start();
+                new Thread(new Speaker(socket, node)).start();
             } catch (IOException e) {
                 System.err.println("Cannot accepting connection: " + e.getMessage());
             }

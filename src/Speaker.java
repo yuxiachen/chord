@@ -4,14 +4,14 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-//Talker thread processes request accepted by listener and writes response to socket.
+//Speaker thread processes request accepted by listener and writes response to socket.
 
-public class Talker implements Runnable{
+public class Speaker implements Runnable{
 
     Socket socket;
     private Node node;
 
-    public Talker(Socket socket, Node node) {
+    public Speaker(Socket socket, Node node) {
         this.socket = socket;
         this.node = node;
     }
@@ -20,7 +20,7 @@ public class Talker implements Runnable{
         try {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
-            String request = Helper.inputStreamToString(in);
+            String request = Util.inputStreamToString(in);
             String response = processRequest(request);
             if (response != null) {
                 out.write(response.getBytes());
@@ -79,7 +79,7 @@ public class Talker implements Runnable{
         } else if (request.startsWith("IAMPRE")) {
             // if request is to notify the local node that it's local node's predecessor,
             // set local node's predecessor as this caller node.
-            InetSocketAddress new_pre = Helper.createSocketAddress(request.split("_")[1]);
+            InetSocketAddress new_pre = Util.createSocketAddress(request.split("_")[1]);
             node.notified(new_pre);
             ret = "NOTIFIED";
         } else if (request.startsWith("KEEP")) {

@@ -13,12 +13,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
-public class Helper {
+public class Util {
 
     private static HashMap<Integer, Long> powerOfTwo;
 
 
-    public Helper() {
+    public Util() {
         //fill the powerOfTwo table
         powerOfTwo = new HashMap<Integer, Long>();
         long base = 1;
@@ -76,7 +76,7 @@ public class Helper {
         // server find something,
         // using response to create, might fail then and return null
         else {
-            InetSocketAddress ret = Helper.createSocketAddress(response.split("_")[1]);
+            InetSocketAddress ret = Util.createSocketAddress(response.split("_")[1]);
             return ret;
         }
     }
@@ -112,7 +112,7 @@ public class Helper {
         } catch (IOException e) {
             System.out.println("Cannot get input stream from server");
         }
-        String response = Helper.inputStreamToString(input);
+        String response = Util.inputStreamToString(input);
 
         // try to close socket
         try {
@@ -191,7 +191,7 @@ public class Helper {
     // print the specific format
     public static String hexIdAndPosition (InetSocketAddress addr) {
         long hash = hashSocketAddress(addr);
-        return (hash+"("+hash*100/Helper.getPowerOfTwo(6)+"%)");
+        return (hash+"("+hash*100/ Util.getPowerOfTwo(6)+"%)");
     }
 
 

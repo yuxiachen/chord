@@ -1,11 +1,11 @@
 import java.net.InetSocketAddress;
 
-// Ask Predecessor thread periodically sends request to node's Predecessor and set node's predecessor status accordingly.
-public class AskPredecessor extends Thread {
+// CheckPredecessor thread periodically sends request to node's Predecessor and set node's predecessor status accordingly.
+public class CheckPredecessor extends Thread {
     private Node node;
     private boolean alive;
 
-    public AskPredecessor(Node node) {
+    public CheckPredecessor(Node node) {
         this.node = node;
         alive = true;
     }
@@ -15,7 +15,7 @@ public class AskPredecessor extends Thread {
         while (alive) {
             InetSocketAddress predecessor = node.getPredecessor();
             if (predecessor != null) {
-                String response = Helper.sendRequest(predecessor, "KEEP");
+                String response = Util.sendRequest(predecessor, "KEEP");
                 if (response == null || !response.equals("ALIVE")) {
                     node.clearPredecessor();
                 }

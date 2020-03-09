@@ -19,7 +19,7 @@ public class FixFingers extends Thread{
         while (alive) {
             // randomly generate a int between [0,5] and updated corresponding entry of node's finger table
             int i = random.nextInt(6);
-            InetSocketAddress ithFinger = node.find_successor(Helper.ithStart(node.getId(), i));
+            InetSocketAddress ithFinger = node.find_successor(Util.ithStart(node.getId(), i));
             node.updateFingers(i, ithFinger);
             try {
                 Thread.sleep(500);
