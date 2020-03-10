@@ -42,7 +42,7 @@ public class Speaker implements Runnable{
         // if request is looking for the closest node of an id, call the closest_preceding_finger method in node to
         // get the alive closet node in the finger table
         if (request.startsWith("CLOSEST")) {
-            long id = Long.parseLong(request.split("_")[1]);
+            int id = Integer.parseInt(request.split("_")[1]);
             result = node.closest_preceding_finger(id);
             String ip = result.getAddress().toString();
             int port = result.getPort();
@@ -71,7 +71,7 @@ public class Speaker implements Runnable{
         } else if (request.startsWith("FINDSUCC")) {
             // if request is looking for the successor of an id,
             // recursively call the find_successor method of node in the ring to get the successor of the given id
-            long id = Long.parseLong(request.split("_")[1]);
+            int id = Integer.parseInt(request.split("_")[1]);
             result = node.find_successor(id);
             String ip = result.getAddress().toString();
             int port = result.getPort();

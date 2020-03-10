@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 public class Node {
 
-    private long localId;
+    private int localId;
     private InetSocketAddress localAddress;
     private InetSocketAddress predecessor;
     private String predecessorText;
@@ -79,16 +79,16 @@ public class Node {
         if (predecessor == null || predecessor.equals(localAddress)) {
             this.setPredecessor(newPre);
         } else {
-            long oldpre_id = Util.hashSocketAddress(predecessor);
-            long local_relative_id = Util.computeRelativeId(localId, oldpre_id);
-            long newpre_relative_id = Util.computeRelativeId(Util.hashSocketAddress(newPre), oldpre_id);
+            int oldpre_id = Util.hashSocketAddress(predecessor);
+            int local_relative_id = Util.computeRelativeId(localId, oldpre_id);
+            int newpre_relative_id = Util.computeRelativeId(Util.hashSocketAddress(newPre), oldpre_id);
             if (newpre_relative_id > 0 && newpre_relative_id < local_relative_id)
                 this.setPredecessor(newPre);
         }
     }
 
     // Ask current node to find identifier's successor.
-    public InetSocketAddress find_successor (long identifier) {
+    public InetSocketAddress find_successor (int identifier) {
         // initialize return value as this node's successor
         InetSocketAddress ret = this.getSuccessor();
         InetSocketAddress pre = find_predecessor(identifier);
@@ -103,14 +103,14 @@ public class Node {
     }
 
     // Ask current node to find identifier's predecessor
-    private InetSocketAddress find_predecessor (long identifier) {
+    private InetSocketAddress find_predecessor (int identifier) {
         InetSocketAddress n = this.localAddress;
         InetSocketAddress n_successor = this.getSuccessor();
         InetSocketAddress most_recently_alive = this.localAddress;
-        long n_successor_relative_id = 0;
+        int n_successor_relative_id = 0;
         if (n_successor != null)
             n_successor_relative_id = Util.computeRelativeId(Util.hashSocketAddress(n_successor), Util.hashSocketAddress(n));
-        long findid_relative_id = Util.computeRelativeId(identifier, Util.hashSocketAddress(n));
+        int findid_relative_id = Util.computeRelativeId(identifier, Util.hashSocketAddress(n));
         while (!(findid_relative_id > 0 && findid_relative_id <= n_successor_relative_id)) {
             // save current node
             InetSocketAddress pre_n = n;
@@ -153,16 +153,16 @@ public class Node {
     }
 
     // Return closest finger preceding node.
-    public InetSocketAddress closest_preceding_finger (long findid) {
-        long findid_relative = Util.computeRelativeId(findid, localId);
+    public InetSocketAddress closest_preceding_finger (int findid) {
+        int findid_relative = Util.computeRelativeId(findid, localId);
         // check from last item in finger table
         for (int i = 5; i >= 0; i--) {
             InetSocketAddress ith_finger = finger.get(i);
             if (ith_finger == null) {
                 continue;
             }
-            long ith_finger_id = Util.hashSocketAddress(ith_finger);
-            long ith_finger_relative_id = Util.computeRelativeId(ith_finger_id, localId);
+            int ith_finger_id = Util.hashSocketAddress(ith_finger);
+            int ith_finger_relative_id = Util.computeRelativeId(ith_finger_id, localId);
             // if its relative id is the closest, check if its alive
             if (ith_finger_relative_id > 0 && ith_finger_relative_id < findid_relative)  {
                 String response  = Util.sendRequest(ith_finger, "KEEP");
@@ -285,7 +285,7 @@ public class Node {
         predecessor = pre;
     }
 
-    public long getId() {
+    public int getId() {
         return localId;
     }
 

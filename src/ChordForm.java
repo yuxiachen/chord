@@ -312,7 +312,7 @@ public class ChordForm extends javax.swing.JFrame {
                             + ":" + fingers[i].getPort();
                     fingerTable[i][2] = IDs[i];
                 }
-                String[] columnNames = {"Start", "IP : Port", "ID & Position"};
+                String[] columnNames = {"Start", "IP : Port", "ID"};
                 DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
                 tFinger.setModel(model);
                 node.printNeighbors();
@@ -379,7 +379,7 @@ public class ChordForm extends javax.swing.JFrame {
             }
         }
         String command = textKey.getText();
-        long hash = Util.hashString(command);
+        int hash = Util.hashString(command);
         InetSocketAddress result = Util.requestAddress(localAddress, "FINDSUCC_"+hash);
 
         // if fail to send request, local node is disconnected, exit

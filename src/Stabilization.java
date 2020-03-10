@@ -23,9 +23,9 @@ public class Stabilization extends Thread {
                 if (nd == null) {
                     localNode.updateFingers(-1, null);
                 } else if (!nd.equals(successor)) { // if successor's predecessor is not the successor itself
-                    long localID = Util.hashSocketAddress(localNode.getAddress());
-                    long successor_relative_id = Util.computeRelativeId(Util.hashSocketAddress(successor), localID);
-                    long x_node_relative_id = Util.computeRelativeId(Util.hashSocketAddress(nd),localID);
+                    int localID = Util.hashSocketAddress(localNode.getAddress());
+                    int successor_relative_id = Util.computeRelativeId(Util.hashSocketAddress(successor), localID);
+                    int x_node_relative_id = Util.computeRelativeId(Util.hashSocketAddress(nd),localID);
                     if (x_node_relative_id>0 && x_node_relative_id < successor_relative_id) {
                         localNode.updateFingers(0, nd);
                     }

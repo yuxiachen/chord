@@ -15,13 +15,13 @@ import java.util.HashMap;
 
 public class Util {
 
-    private static HashMap<Integer, Long> powerOfTwo;
+    private static HashMap<Integer, Integer> powerOfTwo;
 
 
     public Util() {
         //fill the powerOfTwo table
-        powerOfTwo = new HashMap<Integer, Long>();
-        long base = 1;
+        powerOfTwo = new HashMap<Integer, Integer>();
+        int base = 1;
         for (int i = 0; i <= 32; i++) {
             powerOfTwo.put(i, base);
             base *= 2;
@@ -29,7 +29,7 @@ public class Util {
     }
 
     // Use SHA-1 algorithm to calculate the hashcode
-    private static long hashHashCode (String key) {
+    private static int hashHashCode (String key) {
         int maxNode = (int)Math.pow(2, 6);
         MessageDigest md = null;
         try {
@@ -42,14 +42,14 @@ public class Util {
         md.update((key).getBytes(StandardCharsets.UTF_8));
         byte[] hashBytes = md.digest();
         BigInteger hashValue = new BigInteger(1, hashBytes);
-        return (long) Math.abs(hashValue.intValue()) % maxNode;
+        return (int) Math.abs(hashValue.intValue()) % maxNode;
     }
 
-    public static long hashSocketAddress (InetSocketAddress addr) {
+    public static int hashSocketAddress (InetSocketAddress addr) {
         return hashHashCode(addr.toString());
     }
 
-    public static long hashString (String s) {
+    public static int hashString (String s) {
         return hashHashCode(s);
     }
 
@@ -180,8 +180,8 @@ public class Util {
 
 
     //get the relativeId, used in stabilize function
-    public static long computeRelativeId (long universal, long local) {
-        long relativeId = universal - local;
+    public static int computeRelativeId (int universal, int local) {
+        int relativeId = universal - local;
         if (relativeId < 0) {
             relativeId += powerOfTwo.get(6);
         }
@@ -190,18 +190,18 @@ public class Util {
 
     // print the specific format
     public static String hexIdAndPosition (InetSocketAddress addr) {
-        long hash = hashSocketAddress(addr);
-        return (hash+"("+hash*100/ Util.getPowerOfTwo(6)+"%)");
+        int hash = hashSocketAddress(addr);
+        return String.valueOf(hash);
     }
 
 
 
-    public static int ithStart (long nodeid, int i) {
+    public static int ithStart (int nodeid, int i) {
         return Math.toIntExact((nodeid + powerOfTwo.get(i)) % powerOfTwo.get(6));
     }
 
     // get the power of 2
-    public static long getPowerOfTwo (int k) {
+    public static int getPowerOfTwo (int k) {
         return powerOfTwo.get(k);
     }
 
