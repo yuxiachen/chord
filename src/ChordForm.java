@@ -312,7 +312,7 @@ public class ChordForm extends javax.swing.JFrame {
                             + ":" + fingers[i].getPort();
                     fingerTable[i][2] = IDs[i];
                 }
-                String[] columnNames = {"Start", "IP : Port", "ID"};
+                String[] columnNames = {"Start", "IP : Port", "Node ID"};
                 DefaultTableModel model = new DefaultTableModel(fingerTable, columnNames);
                 tFinger.setModel(model);
                 node.printNeighbors();
@@ -390,7 +390,7 @@ public class ChordForm extends javax.swing.JFrame {
         }
         // return your response and print it in the panel
         return "\nNode "+result.getAddress().toString()+"\nPort: " +
-                result.getPort()+"\nPosition: " + Util.hexIdAndPosition(result );
+                result.getPort()+"\nNode ID: " + Util.hexIdAndPosition(result );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
