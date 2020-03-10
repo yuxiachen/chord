@@ -311,7 +311,7 @@ public class Node {
             predecessorText = "Yourself";
         } else { // it can find either predecessor or successor
             if (predecessor != null) {
-                predecessorText = predecessor.getAddress().toString().substring(1);
+                predecessorText = predecessor.getAddress().toString().substring(1) + "  ID: "+Util.hashSocketAddress(predecessor);
             } else {
                 predecessorText = "updating...";
             }

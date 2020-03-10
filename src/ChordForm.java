@@ -413,7 +413,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
 
     private static Util util = new Util();
-    private static Node node = new Node (Util.createSocketAddress("192.168.1.31" + ":" + "6000"));
+    private static Node node = new Node (Util.createSocketAddress("172.31.78.170" + ":" + "8000"));
     private static InetSocketAddress contact;
     private String alertMessage =  "";
 }
