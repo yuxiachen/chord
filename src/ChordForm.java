@@ -389,7 +389,7 @@ public class ChordForm extends javax.swing.JFrame {
             return  "";
         }
         // return your response and print it in the panel
-        return "\nNode "+result.getAddress().toString()+"\nPort: " +
+        return "\nHash value of key: "+ hash + "\nIP: " + result.getAddress().toString().substring(1)+"\nPort: " +
                 result.getPort()+"\nNode ID: " + Util.hexIdAndPosition(result );
     }
 
@@ -413,7 +413,7 @@ public class ChordForm extends javax.swing.JFrame {
     private javax.swing.JTextField textPort;
 
     private static Util util = new Util();
-    private static Node node = new Node (Util.createSocketAddress("172.31.78.170" + ":" + "8000"));
+    private static Node node = new Node (Util.createSocketAddress("172.26.24.225" + ":" + "8000"));
     private static InetSocketAddress contact;
     private String alertMessage =  "";
 }
